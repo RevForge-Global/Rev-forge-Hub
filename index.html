@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CMD HUB">
-<link rel="manifest" id="pwa-manifest">
+
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -362,7 +362,7 @@ body {
 
 <!-- MAIN SITE BUTTON -->
 <div class="main-btn-wrap">
-  <a href="https://revforge-global.github.io/RevFoRG-GLoBal" target="_blank" class="main-site-btn">
+  <a href="https://revforge-global.github.io/Revforge-prime/" target="_blank" class="main-site-btn">
     <span>🌐 RevForge Global — Main Website</span>
     <span>→</span>
   </a>
@@ -757,52 +757,7 @@ window.addEventListener('resize', init); init(); draw();
 
 // ===== INLINE PWA — NO EXTERNAL FILES NEEDED =====
 
-// 1. Inject manifest via blob
-const manifest = {
-  name: "RevForge Commander Hub",
-  short_name: "CMD HUB",
-  description: "RevForge Global Commander Control Center",
-  start_url: "./",
-  display: "standalone",
-  background_color: "#010409",
-  theme_color: "#C9A84C",
-  orientation: "portrait",
-  icons: [
-    { src: "https://revforge-global.github.io/RevFoRG-GLoBal/assets/logo.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
-    { src: "https://revforge-global.github.io/RevFoRG-GLoBal/assets/logo.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }
-  ]
-};
-const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-const manifestURL = URL.createObjectURL(manifestBlob);
-document.getElementById('pwa-manifest').setAttribute('href', manifestURL);
-
-// 2. Inline Service Worker via blob
-const swCode = `
-const CACHE = 'rfg-commander-v1';
-const ASSETS = ['/'];
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
-  self.skipWaiting();
-});
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys =>
-    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-  ));
-  self.clients.claim();
-});
-self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(cached => cached || fetch(e.request)));
-});
-`;
-if ('serviceWorker' in navigator) {
-  const swBlob = new Blob([swCode], {type: 'application/javascript'});
-  const swURL = URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swURL, {scope: '/'})
-    .then(() => console.log('✅ RevForge SW Ready'))
-    .catch(e => console.log('SW:', e));
-}
-
-// 3. Install button
+// PWA Install button
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
